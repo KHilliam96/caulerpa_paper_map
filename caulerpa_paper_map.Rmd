@@ -1,0 +1,300 @@
+---
+title: "caulerpa_paper_map"
+output: html_document
+date: "2025-08-05"
+editor_options: 
+  chunk_output_type: console
+---
+
+
+Code developed using R version 4.5
+
+Remote code repository location: https://github.com/KHilliam96/
+
+# Aim
+-   create interactive caulerpa map
+
+# To Do
+-   sort location and site names in metadata to merge 
+
+# Important Notes
+-   
+
+# Labelling System
+
+-   .df, .list, .dist etc at the end of an object signify what class it is
+-   iterations of an object where no significant change has occured will be noted numerically i.e., .df/.df2/.df3
+-   df with spatial information and sf or sp objects will contain the coordinate system in their name, e.g., buffer_WGS1984.sf once transformed. But will not in first instance (buffer.df)
+
+# Setup
+
+```{r setup, include = FALSE}
+# https://bookdown.org/yihui/rmarkdown/r-code.html
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+  warnings = FALSE, error = FALSE)
+
+```
+
+```{r packages, include = FALSE}
+# Clear the space
+rm(list = ls()) # clear memory
+
+# Load packages
+# Install and load pacman
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  message("pacman is being installed and has been loaded.")
+  install.packages("pacman")
+  library(pacman)
+} else {
+  message("pacman is installed and has been loaded.")
+  library(pacman)
+}
+
+# Data Wrangling
+pacman::p_load(tidyverse)
+
+# Spatial
+pacman::p_load(sf)
+
+# Plotting
+pacman::p_load(leaflet)
+pacman::p_load(leaflet.extras)
+
+```
+
+```{r Set up versioning and outputs, include = FALSE}
+options(scipen = 999)
+write_outputs <- FALSE
+version <- "_V1"
+
+project_directory <- "/home/khill/Documents/science/caulerpa_paper_2025"
+```
+
+```{r File Locations, include = FALSE}
+setwd(project_directory)
+getwd()
+
+# Get the location of our input data (this folder was created manually when
+# saving the data)
+
+inputs <- file.path(project_directory, "1_raw_inputs")
+
+# All other folders can be created in the code (note, will only do this once)
+
+# Create a directory to store current work in progress and files created in R
+
+wip_r_directory <- file.path(project_directory, "2_wip_r")
+
+if (!"work_in_progress_R" %in% basename(list.dirs(project_directory))) { # Check folder has not already been created
+  
+  dir.create(wip_r_directory)
+  
+  print("creating directory to store wip files")
+  
+} else {
+  
+  print("found existing wip directory")
+  
+}
+
+# Create a directory to store current work in progress and files created in GIS
+
+wip_gis_directory <- file.path(project_directory, "3_wip_non_code")
+
+if (!"work_in_progress_GIS" %in% basename(list.dirs(project_directory))) { # Check folder has not already been created
+  
+  dir.create(wip_gis_directory)
+  
+  print("creating directory to store GIS wip files")
+  
+} else {
+  
+  print("found existing non-code wip directory")
+  
+}
+
+# Create a directory to store all finalised outputs
+
+processed_output_directory <- file.path(project_directory, "4_clean_outputs")
+
+if (!"processed_outputs" %in% basename(list.dirs(project_directory))) { # Check folder has not already been created
+  
+  dir.create(processed_output_directory)
+  
+  print("creating directory to store outputs")
+  
+} else {
+  
+  print("found existing outputs directory")
+  
+}
+
+# Create a directory to store all finalised figures
+
+figure_directory <- file.path(project_directory, "5_manuscript_figures")
+
+if (!"5_manuscript_figures" %in% basename(list.dirs(project_directory))) { # Check folder has not already been created
+  
+  dir.create(figure_directory)
+  
+  print("creating directory to store figures")
+  
+} else {
+  
+  print("found existing figure directory")
+  
+  
+}  
+
+# Create a directory to store all supplementary figures
+
+supporting_directory <- file.path(project_directory, "6_supporting_figures")
+
+if (!"6_supporting_figures" %in% basename(list.dirs(project_directory))) { # Check folder has not already been created
+  
+  dir.create(supporting_directory)
+  
+  print("creating directory to store figures")
+  
+} else {
+  
+  print("found existing supporting directory")
+  
+  
+}
+  
+```
+
+# Import data
+
+```{r Import Survey Reachability Network}
+survey_reach_nodes.sf <- st_read(file.path(inputs, 
+                                           "rec_net_caulerpa_V4.0_nodes.shp"))
+  
+survey_reach_edges.sf <- st_read(file.path(inputs, 
+                                          "rec_net_caulerpa_V4.0_edges.shp"))
+
+```
+
+```{r Import Survey Downstream Network}
+survey_down_nodes.sf <- st_read(file.path(inputs, 
+                                         "rec_net_caulerpa_downstream_5kn_V4.0_nodes.shp"))
+
+survey_down_edges.sf <- st_read(file.path(inputs,
+                                          "rec_net_caulerpa_downstream_5kn_V4.0_edges.shp"))
+
+```
+
+```{r Import AIS Reachability Network}
+ais_reach_nodes.sf <- st_read(file.path(inputs,
+                                        "AIS_net_GBI_16_06_2023_NZTM_nodes.shp"))
+
+ais_reach_edges.sf <- st_read(file.path(inputs,
+                                        "AIS_net_GBI_16_06_2023_NZTM_edges.shp"))
+
+```
+
+```{r Import AIS Downstream Network}
+ais_down_nodes.sf <- st_read(file.path(inputs,
+                                        "AIS_net_Caulerpa_30_06_2023_NZTM_nodes.shp"))
+  
+  
+ais_down_edges.sf <- st_read(file.path(inputs,
+                                        "AIS_net_Caulerpa_30_06_2023_NZTM_edges.shp"))
+
+```
+
+
+# Manipulate
+
+```{r Transform to WGS84}
+survey_reach_nodes_wgs84.sf <- st_transform(survey_reach_nodes.sf, crs = "EPSG:4326")
+survey_reach_edges_wgs84.sf <- st_transform(survey_reach_edges.sf, crs = "EPSG:4326")
+
+survey_down_nodes_wgs84.sf <- st_transform(survey_down_nodes.sf, crs = "EPSG:4326")
+survey_down_edges_wgs84.sf <- st_transform(survey_down_edges.sf, crs = "EPSG:4326")
+
+ais_reach_nodes_wgs84.sf <- st_transform(ais_reach_nodes.sf, crs = "EPSG:4326")
+ais_reach_edges_wgs84.sf <- st_transform(ais_reach_edges.sf, crs = "EPSG:4326")
+
+ais_down_nodes_wgs84.sf <- st_transform(ais_down_nodes.sf, crs = "EPSG:4326")
+ais_down_edges_wgs84.sf <- st_transform(ais_down_edges.sf, crs = "EPSG:4326")
+
+
+```
+
+
+
+# Plot 
+
+
+```{r Interactive Leaflet plot}
+caulerpa_leaflet.plot <- leaflet() %>%
+                        leaflet(options = leafletOptions(maxZoom = 13)) %>%
+                        # setView(lng = 15, lat = 5, zoom = 2) %>%
+                        addProviderTiles(providers$CartoDB.Positron,
+                                        group = "CartoDB") %>%
+                        addProviderTiles(providers$Esri.WorldGrayCanvas, 
+                                         group = "Esri Gray") %>%
+                        addProviderTiles(providers$OpenStreetMap.Mapnik, 
+                                         group = "OSM Mapnik") %>%
+                        addControl(html = "<div id='map-title' style='font-weight: bold;'>Interactive Map</div>", 
+                                   position = "topright") %>%
+                        addScaleBar(position = "bottomright") %>%
+                    addPolylines(data = survey_reach_edges_wgs84.sf,
+                                             color = "gray",
+                                             opacity = 0.7,
+                                             weight = 0.5,
+                                 group = "Survey Reachability") %>%                  # Add minor edges
+                                addPolylines(data = survey_down_edges_wgs84.sf,
+                                             weight = 1,
+                                             color = "orange",
+                                             group = "Survey Downstream",
+                                             fillOpacity = 0.7,
+                                             # popup = ~ paste("From", from, "To", to, ", Vessels =", vessels, sep = " ")
+                                             ) %>% # Add main edges
+                                addCircleMarkers(data = survey_reach_nodes_wgs84.sf,
+                                                 color = "gray",
+                                                 radius = 3,
+                                                 opacity = 1,
+                                                 group = "Survey Reachability",
+                                                 # popup = ~ paste(name,", ", "Type:", Type, ", ID:", ID, ", Incoming Vessels =", in_strength , sep = " ")
+                                                 ) %>%                                                   # Add minor nodes
+                                addCircleMarkers(data = survey_down_nodes_wgs84.sf,
+                                                 radius = 3,
+                                                 color = "orange",
+                                                 weight = 1,                        # Change width of outside colour
+                                                 # fillColor = ~node_pal(strength_bin),
+                                                 fillOpacity = 0.7,
+                                                 group = "Incoming vessels",
+                                                 # popup = ~ paste(name,", ", "Type:", Type, ", ID:", ID, ", Incoming Vessels =", in_strength , sep = " ")
+                                                 ) %>% # Add main nodes
+                                setView(173.40, -42.22, zoom = 4) %>%
+                                addControl(html = "<div id='map-title'>NZ Domestic Vessel Caulerpa Reach</div>",
+                                                  position = "topright") %>%
+                                addControl(html = "<div id='map-title'>Author: Cal Faubel & Kyle Hilliam</div>",
+                                                  position = "bottomleft") %>%
+                                addLayersControl(baseGroups = c("Street view",  "Satellite"),
+                                                        options = layersControlOptions(collapsed = F)) %>%
+                                addScaleBar() %>%
+                                addLayersControl(overlayGroups = c("Survey Reachability", 
+                                                           "Survey Downstream"),
+                                         baseGroups = c("OSM Mapnik",
+                                                        "Esri Gray",
+                                                        "CartoDB"),
+                                         options = layersControlOptions(collapsed = FALSE)) %>% # Layer control
+                        addEasyButton(easyButton(icon = "fa-globe",
+                                                  title = "Reset View",
+                                                  onClick = JS("function(btn, map){ map.setView([5, 15], 2); }"))) %>%
+                        addMiniMap(tiles = providers$OpenStreetMap.Mapnik,  # match the default main map base layer
+                                    toggleDisplay = TRUE,
+                                    minimized = TRUE,
+                                    position = "topleft") # add inset map
+
+caulerpa_leaflet.plot
+
+```
+
+
+
+
