@@ -231,61 +231,81 @@ ais_down_edges_wgs84.sf <- st_transform(ais_down_edges.sf, crs = "EPSG:4326")
 ```{r Interactive Leaflet plot}
 caulerpa_leaflet.plot <- leaflet() %>%
                         leaflet(options = leafletOptions(maxZoom = 13)) %>%
-                        # setView(lng = 15, lat = 5, zoom = 2) %>%
                         addProviderTiles(providers$CartoDB.Positron,
                                         group = "CartoDB") %>%
                         addProviderTiles(providers$Esri.WorldGrayCanvas, 
                                          group = "Esri Gray") %>%
                         addProviderTiles(providers$OpenStreetMap.Mapnik, 
                                          group = "OSM Mapnik") %>%
-                        addControl(html = "<div id='map-title' style='font-weight: bold;'>Interactive Map</div>", 
-                                   position = "topright") %>%
-                        addScaleBar(position = "bottomright") %>%
-                    addPolylines(data = survey_reach_edges_wgs84.sf,
-                                             color = "gray",
-                                             opacity = 0.7,
-                                             weight = 0.5,
-                                 group = "Survey Reachability") %>%                  # Add minor edges
-                                addPolylines(data = survey_down_edges_wgs84.sf,
-                                             weight = 1,
-                                             color = "orange",
-                                             group = "Survey Downstream",
-                                             fillOpacity = 0.7,
-                                             # popup = ~ paste("From", from, "To", to, ", Vessels =", vessels, sep = " ")
-                                             ) %>% # Add main edges
-                                addCircleMarkers(data = survey_reach_nodes_wgs84.sf,
-                                                 color = "gray",
-                                                 radius = 3,
-                                                 opacity = 1,
-                                                 group = "Survey Reachability",
-                                                 # popup = ~ paste(name,", ", "Type:", Type, ", ID:", ID, ", Incoming Vessels =", in_strength , sep = " ")
-                                                 ) %>%                                                   # Add minor nodes
-                                addCircleMarkers(data = survey_down_nodes_wgs84.sf,
-                                                 radius = 3,
-                                                 color = "orange",
-                                                 weight = 1,                        # Change width of outside colour
-                                                 # fillColor = ~node_pal(strength_bin),
-                                                 fillOpacity = 0.7,
-                                                 group = "Incoming vessels",
-                                                 # popup = ~ paste(name,", ", "Type:", Type, ", ID:", ID, ", Incoming Vessels =", in_strength , sep = " ")
-                                                 ) %>% # Add main nodes
+                        addPolylines(data = survey_reach_edges_wgs84.sf,
+                                     color = "gray",
+                                     opacity = 0.7,
+                                     weight = 0.5,
+                                      group = "Survey Reachability") %>%         
+                        addCircleMarkers(data = survey_reach_nodes_wgs84.sf,
+                                         color = "gray",
+                                         radius = 3,
+                                         opacity = 1,
+                                         group = "Survey Reachability",
+                                         ) %>%                                    
+                        addPolylines(data = survey_down_edges_wgs84.sf,
+                                     weight = 1,
+                                     color = "orange",
+                                     group = "Survey Downstream",
+                                     fillOpacity = 0.7,
+                                     ) %>% # Add main edges
+                        addCircleMarkers(data = survey_down_nodes_wgs84.sf,
+                                         radius = 3,
+                                         color = "orange",
+                                         weight = 1,                        
+                                         fillOpacity = 0.7,
+                                         group = "Survey Downstream",
+                                         ) %>% 
+                          addPolylines(data = ais_reach_edges_wgs84.sf,
+                                     color = "steelblue",
+                                     opacity = 0.7,
+                                     weight = 0.5,
+                                      group = "AIS Reachability") %>%         
+                        addCircleMarkers(data = ais_reach_nodes_wgs84.sf,
+                                         color = "steelblue",
+                                         radius = 3,
+                                         opacity = 1,
+                                         group = "AIS Reachability",
+                                         ) %>%                                    
+                        addPolylines(data = ais_down_edges_wgs84.sf,
+                                     weight = 1,
+                                     color = "red",
+                                     group = "AIS Downstream",
+                                     fillOpacity = 0.7,
+                                     ) %>% # Add main edges
+                        addCircleMarkers(data = ais_down_nodes_wgs84.sf,
+                                         radius = 3,
+                                         color = "red",
+                                         weight = 1,                        
+                                         fillOpacity = 0.7,
+                                         group = "AIS Downstream",
+                                         ) %>% 
                                 setView(173.40, -42.22, zoom = 4) %>%
-                                addControl(html = "<div id='map-title'>NZ Domestic Vessel Caulerpa Reach</div>",
-                                                  position = "topright") %>%
                                 addControl(html = "<div id='map-title'>Author: Cal Faubel & Kyle Hilliam</div>",
                                                   position = "bottomleft") %>%
-                                addLayersControl(baseGroups = c("Street view",  "Satellite"),
-                                                        options = layersControlOptions(collapsed = F)) %>%
-                                addScaleBar() %>%
-                                addLayersControl(overlayGroups = c("Survey Reachability", 
-                                                           "Survey Downstream"),
-                                         baseGroups = c("OSM Mapnik",
+                               addControl(html = "<div id='map-title' style='font-weight: bold;'>NZ Domestic Vessel Caulerpa Reach</div>", 
+                                   position = "topright") %>%
+                                addScaleBar(position = "bottomright") %>%
+                                addLayersControl(baseGroups = c("OSM Mapnik",
                                                         "Esri Gray",
                                                         "CartoDB"),
-                                         options = layersControlOptions(collapsed = FALSE)) %>% # Layer control
+                                         options = layersControlOptions(collapsed = TRUE)) %>% # Layer control
+                                hideGroup(c("Survey Downstream",
+                                            "AIS Reachability",
+                                            "AIS Downstream")) %>% # Hide all but first 
+                                addLayersControl(overlayGroups = c("Survey Reachability", 
+                                                           "Survey Downstream",
+                                                           "AIS Reachability",
+                                                           "AIS Downstream"),
+                                         options = layersControlOptions(collapsed = FALSE)) %>%
                         addEasyButton(easyButton(icon = "fa-globe",
                                                   title = "Reset View",
-                                                  onClick = JS("function(btn, map){ map.setView([5, 15], 2); }"))) %>%
+                                                  onClick = JS("function(btn, map){ map.setView([-42.22, 173.40], 4); }"))) %>%
                         addMiniMap(tiles = providers$OpenStreetMap.Mapnik,  # match the default main map base layer
                                     toggleDisplay = TRUE,
                                     minimized = TRUE,
