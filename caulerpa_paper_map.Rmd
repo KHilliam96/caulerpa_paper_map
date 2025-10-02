@@ -59,6 +59,8 @@ pacman::p_load(sf)
 # Plotting
 pacman::p_load(leaflet)
 pacman::p_load(leaflet.extras)
+p_load(htmlwidgets)
+p_load(htmltools)
 
 ```
 
@@ -67,7 +69,9 @@ options(scipen = 999)
 write_outputs <- FALSE
 version <- "_V1"
 
-project_directory <- "/home/khill/Documents/science/caulerpa_paper_2025"
+# project_directory <- "/home/khill/Documents/science/caulerpa_paper_2025"
+project_directory <- "C:/Users/KyleHilliam/OneDrive - Sydney Institute of Marine Science/Documents/science/data/caulerpa_paper"
+
 ```
 
 ```{r File Locations, include = FALSE}
@@ -398,50 +402,49 @@ ais_node_leaflet_84_REM_REACH.sf <- filter(ais_reach_nodes_wgs84_REM.sf, nID %in
 
 
 ```{r Interactive Leaflet plot}
-p_load(htmlwidgets)
-p_load(htmltools)
-# Add custom legend
-downstream_legend <- HTML('
-  <div style="background:white; padding:8px; border-radius:5px; font-size:12px; line-height:1.4;">
-    <b>Relative <i>Caulerpa</i> Pressure</b><br>
-    % of total region-wide anchoring events<br>
-    <div><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:red; margin-right:6px;"></span>< 1</div>
-    <div><span style="display:inline-block; width:16px; height:16px; border-radius:50%; background:red; margin-right:6px;"></span>1 - 2.5</div>
-    <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; margin-right:6px;"></span>2.5 - 5</div>
-    <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; margin-right:6px;"></span>> 5</div>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:blue; margin-right:6px;"></span>Exotic <i>Caulerpa</i> sites</div>
-    <br>
-    <b>Annual vessel movements</b><br>
-    % of nationwide total<br>
-    <div><span style="display:inline-block; width:30px; border-top:2px solid #E3E5DC; margin-right:6px;"></span>< 0.02</div>
-    <div><span style="display:inline-block; width:30px; border-top:2px solid #E7E8C4; margin-right:6px;"></span>0.02 - 0.1</div>
-    <div><span style="display:inline-block; width:30px; border-top:2px solid #E4DDBD; margin-right:6px;"></span>0.1 - 0.25</div>
-    <div><span style="display:inline-block; width:30px; border-top:2px solid #CBA66E; margin-right:6px;"></span>0.25 - 2.5</div>
-    <div><span style="display:inline-block; width:30px; border-top:2px solid #8E2D11; margin-right:6px;"></span>> 2.5</div>
-  </div>
-')
 
-reachability_legend <- HTML('
-  <div style="background:white; padding:8px; border-radius:5px; font-size:12px; line-height:1.4;">
-    <b>Annual vessel arrivals</b><br>
-    % of nationwide total<br>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; border:1px solid black; background:white; margin-right:6px;"></span>< 0.25</div>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; border:1px solid black; background:white; margin-right:6px;"></span>0.25 - 1</div>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; border:1px solid black; background:white; margin-right:6px;"></span>1 - 2.5</div>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; border:1px solid black; background:white; margin-right:6px;"></span>> 2.5</div>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:red; margin-right:6px;"></span>NRC sites</div>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:blue; margin-right:6px;"></span>Exotic <i>Caulerpa</i> sites</div>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:lightgrey; margin-right:6px;"></span>Sites outside of NRC</div>
-    <br>
-    <b>Annual vessel movements</b><br>
-    % of nationwide total<br>
-    <div><span style="display:inline-block; width:30px; border-top:2px solid #E3E5DC; margin-right:6px;"></span>< 0.02</div>
-    <div><span style="display:inline-block; width:30px; border-top:2px solid #E7E8C4; margin-right:6px;"></span>0.02 - 0.1</div>
-    <div><span style="display:inline-block; width:30px; border-top:2px solid #E4DDBD; margin-right:6px;"></span>0.1 - 0.25</div>
-    <div><span style="display:inline-block; width:30px; border-top:2px solid #CBA66E; margin-right:6px;"></span>0.25 - 1</div>
-    <div><span style="display:inline-block; width:30px; border-top:4px solid #8E2D11; margin-right:6px;"></span>> 1</div>
-  </div>
-')
+# Add custom legend
+# downstream_legend <- HTML('
+#   <div style="background:white; padding:8px; border-radius:5px; font-size:12px; line-height:1.4;">
+#     <b>Relative <i>Caulerpa</i> Pressure</b><br>
+#     % of total region-wide anchoring events<br>
+#     <div><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:red; margin-right:6px;"></span>< 1</div>
+#     <div><span style="display:inline-block; width:16px; height:16px; border-radius:50%; background:red; margin-right:6px;"></span>1 - 2.5</div>
+#     <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; margin-right:6px;"></span>2.5 - 5</div>
+#     <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; margin-right:6px;"></span>> 5</div>
+#     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:blue; margin-right:6px;"></span>Exotic <i>Caulerpa</i> sites</div>
+#     <br>
+#     <b>Annual vessel movements</b><br>
+#     % of nationwide total<br>
+#     <div><span style="display:inline-block; width:30px; border-top:2px solid #E3E5DC; margin-right:6px;"></span>< 0.02</div>
+#     <div><span style="display:inline-block; width:30px; border-top:2px solid #E7E8C4; margin-right:6px;"></span>0.02 - 0.1</div>
+#     <div><span style="display:inline-block; width:30px; border-top:2px solid #E4DDBD; margin-right:6px;"></span>0.1 - 0.25</div>
+#     <div><span style="display:inline-block; width:30px; border-top:2px solid #CBA66E; margin-right:6px;"></span>0.25 - 2.5</div>
+#     <div><span style="display:inline-block; width:30px; border-top:2px solid #8E2D11; margin-right:6px;"></span>> 2.5</div>
+#   </div>
+# ')
+# 
+# reachability_legend <- HTML('
+#   <div style="background:white; padding:8px; border-radius:5px; font-size:12px; line-height:1.4;">
+#     <b>Annual vessel arrivals</b><br>
+#     % of nationwide total<br>
+#     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; border:1px solid black; background:white; margin-right:6px;"></span>< 0.25</div>
+#     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; border:1px solid black; background:white; margin-right:6px;"></span>0.25 - 1</div>
+#     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; border:1px solid black; background:white; margin-right:6px;"></span>1 - 2.5</div>
+#     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; border:1px solid black; background:white; margin-right:6px;"></span>> 2.5</div>
+#     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:red; margin-right:6px;"></span>NRC sites</div>
+#     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:blue; margin-right:6px;"></span>Exotic <i>Caulerpa</i> sites</div>
+#     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:lightgrey; margin-right:6px;"></span>Sites outside of NRC</div>
+#     <br>
+#     <b>Annual vessel movements</b><br>
+#     % of nationwide total<br>
+#     <div><span style="display:inline-block; width:30px; border-top:2px solid #E3E5DC; margin-right:6px;"></span>< 0.02</div>
+#     <div><span style="display:inline-block; width:30px; border-top:2px solid #E7E8C4; margin-right:6px;"></span>0.02 - 0.1</div>
+#     <div><span style="display:inline-block; width:30px; border-top:2px solid #E4DDBD; margin-right:6px;"></span>0.1 - 0.25</div>
+#     <div><span style="display:inline-block; width:30px; border-top:2px solid #CBA66E; margin-right:6px;"></span>0.25 - 1</div>
+#     <div><span style="display:inline-block; width:30px; border-top:4px solid #8E2D11; margin-right:6px;"></span>> 1</div>
+#   </div>
+# ')
 
 caulerpa_leaflet.plot <- leaflet() %>%
                         leaflet(options = leafletOptions(maxZoom = 13)) %>%
@@ -616,7 +619,7 @@ caulerpa_leaflet.plot <- leaflet() %>%
                         setView(173.40, -42.22, zoom = 4) %>%
                         addControl(html = "<div id='map-title'>Author: Cal Faubel & Kyle Hilliam</div>",
                                           position = "bottomleft") %>%
-                       addControl(html = "<div id='map-title' style='font-weight: bold;'>NZ Domestic Vessel Caulerpa Reach</div>", 
+                        addControl(html = "<div id='map-title' style='font-weight: bold;'>NZ Domestic Vessel Caulerpa Reach</div>", 
                            position = "topright") %>%
                         addScaleBar(position = "bottomright") %>%
                         hideGroup(c("Survey Downstream",
