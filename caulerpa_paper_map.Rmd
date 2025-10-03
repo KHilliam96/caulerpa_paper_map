@@ -397,9 +397,30 @@ annual_vessel_breaks <- c(0.00001, 0.25, 1, 2.5, 100)
   ais_reach_nodes_wgs84_NRC_ANC.sf$perc_bin <- cut(ais_reach_nodes_wgs84_NRC_ANC.sf$Perc_tot, breaks = annual_vessel_breaks,
                                               labels = c("<0.25", "0.25 - 1", "1 - 2.5", ">2.5"))
   
-  node_custom_weights <- c(12, 16, 20, 24 )
+  node_custom_weights <- c(12, 16, 20, 24)
 
   reach_node_sizes <- function(bin) {
+    # Map vessel_bin values to node_custom_weights
+    return(node_custom_weights[bin])
+  }
+  
+  
+  down_vessel_breaks <- c(0.00001, 1, 2.5, 5, 100)
+
+  # Create binned variable column
+  survey_leaflet_84_5kn_NRC_ANC.sf$perc_bin <- cut(survey_leaflet_84_5kn_NRC_ANC.sf$per_inc, breaks = down_vessel_breaks,
+                                                      labels = c("<1", "1 - 2.5", "2.5 - 5", ">5"))
+  
+  survey_leaflet_84_5kn_NRC_OMA.sf$perc_bin <- cut(survey_leaflet_84_5kn_NRC_OMA.sf$per_inc, breaks = down_vessel_breaks,
+                                                      labels = c("<1", "1 - 2.5", "2.5 - 5", ">5"))
+  
+  
+  ais_leaflet_84_5kn_NRC_ANC.sf$perc_bin <- cut(ais_leaflet_84_5kn_NRC_ANC.sf$Perc_tot, breaks = down_vessel_breaks,
+                                                    labels = c("<1", "1 - 2.5", "2.5 - 5", ">5"))
+  
+  node_custom_weights <- c(12, 16, 20, 24)
+
+  down_node_sizes <- function(bin) {
     # Map vessel_bin values to node_custom_weights
     return(node_custom_weights[bin])
   }
@@ -504,11 +525,11 @@ reachability_legend <- HTML('
   <div style="background:white; padding:8px; border-radius:5px; font-size:12px; line-height:1.4;">
     <b>Annual vessel arrivals</b><br>
     % of nationwide total<br>
-    <div><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:red; margin-right:6px;"></span>< 0.25</div>
-    <div><span style="display:inline-block; width:16px; height:16px; border-radius:50%; background:red; margin-right:6px;"></span>0.25 - 1</div>
-    <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; margin-right:6px;"></span>1 - 2.5</div>
-    <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; margin-right:6px;"></span>> 2.5</div>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#0070FF; margin-right:6px;"></span>Exotic <em>Caulerpa</em> sites</div>
+    <div><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>< 0.25</div>
+    <div><span style="display:inline-block; width:16px; height:16px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>0.25 - 1</div>
+    <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
+    <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 2.5</div>
+    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#0070FF; border:1.5px solid black; margin-right:6px;"></span>Exotic <em>Caulerpa</em> sites</div>
     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#9C9C9C; margin-right:6px;"></span>Sites outside of NRC</div>
     <br>
     <b>Annual vessel movements</b><br>
@@ -525,11 +546,11 @@ downstream_legend <- HTML('
   <div style="background:white; padding:8px; border-radius:5px; font-size:12px; line-height:1.4;">
     <b>Relative <em>Caulerpa</em> Pressure</b><br>
     % of total region-wide anchoring events<br>
-    <div><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:red; margin-right:6px;"></span>< 1</div>
-    <div><span style="display:inline-block; width:16px; height:16px; border-radius:50%; background:red; margin-right:6px;"></span>1 - 2.5</div>
-    <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; margin-right:6px;"></span>2.5 - 5</div>
-    <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; margin-right:6px;"></span>> 5</div>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#0070FF; margin-right:6px;"></span>Exotic <em>Caulerpa</em> sites</div>
+    <div><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>< 1</div>
+    <div><span style="display:inline-block; width:16px; height:16px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
+    <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>2.5 - 5</div>
+    <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 5</div>
+    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#0070FF; border:1.5px solid black; margin-right:6px;"></span>Exotic <em>Caulerpa</em> sites</div>
     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#9C9C9C; margin-right:6px;"></span>Sites outside of NRC</div>
     <br>
     <b>Annual vessel movements</b><br>
@@ -540,6 +561,7 @@ downstream_legend <- HTML('
     <div><span style="display:inline-block; width:30px; border-top:4px solid #E7A244; margin-right:6px;"></span>0.25 - 2.5</div>
     <div><span style="display:inline-block; width:30px; border-top:6px solid #873300; margin-right:6px;"></span>> 2.5</div>
   </div>')
+
 
 
 
@@ -593,14 +615,14 @@ for(i in seq_along(ais_reach_edges_wgs84.list)){
   caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
     addPolylines(data = ais_reach_edges_wgs84.list[[i]],
                  color = ~reach_edge_pal(perc_bin),
-                 opacity = 1,
+                 opacity = 0.7,
                  weight = ~reach_edge_weights(perc_bin),
                  group = "AIS Reachability",
                  label = ~ paste0("From ", from, " To ", to),
                  popup = ~ paste0("From ", from, " To ", to, ", Vessels =", Noboats)) %>%
     addPolylines(data = survey_reach_edges_wgs84.list[[i]],
                  color = ~reach_edge_pal(perc_bin), 
-                 opacity = 1,
+                 opacity = 0.7,
                  weight = ~reach_edge_weights(perc_bin),
                  group = "Survey Reachability",
                  label = ~ paste0(" From ", from, " To ", to),
@@ -608,11 +630,13 @@ for(i in seq_along(ais_reach_edges_wgs84.list)){
     addPolylines(data = ais_down_edges_wgs84.list[[i]], 
                  weight = ~down_edge_weights(perc_bin), 
                  color = ~down_edge_pal(perc_bin),
+                 opacity = 0.7,
                  group = "AIS Downstream",
                  popup = ~ paste0(" From ", from, " To ", to, ", Vessels = ", Noboats)) %>%
     addPolylines(data = survey_down_edges_wgs84.list[[i]], 
                  weight = ~down_edge_weights(perc_bin), 
                  color = ~down_edge_pal(perc_bin),
+                 opacity = 0.7,
                  group = "Survey Downstream",
                   popup = ~ paste0(" From ", from, " To ", to, ", Vessels = ", vessels))
   
@@ -626,7 +650,7 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
 # Survey Reachability
                         # addPolylines(data = survey_reach_edges_wgs84.sf,
                         #              color = ~reach_edge_pal(perc_bin), 
-                        #              opacity = 1,
+                        #              opacity = 0.7,
                         #              weight = ~reach_edge_weights(perc_bin),
                         #              group = "Survey Reachability",
                         #              label = ~ paste0(" From ", from, " To ", to),
@@ -634,7 +658,7 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
                         addCircleMarkers(data = Node_leaflet_84_REM.sf2,
                                          color = "#9C9C9C",
                                          radius = 2,
-                                         opacity = 1,
+                                         opacity = 0.7,
                                          group = "Survey Reachability",
                                          label = ~ paste0(Cmmn_nm, ", ", Region),
                                          popup = ~ paste0(Cmmn_nm, ", ", Region)
@@ -643,14 +667,15 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
                                          color = "#9C9C9C",
                                          fillColor = "#9C9C9C",
                                          radius = 3,
-                                         opacity = 1,
-                                         fillOpacity = 1,
+                                         opacity = 0.7,
+                                         fillOpacity = 0.7,
                                          group = "Survey Reachability",
                                          label = ~ paste0(Cmmn_nm, ", ", Region),
                                          popup = ~ paste0(Cmmn_nm, ", ID:", nID, ", ", Region)
                                          ) %>%
                         addCircleMarkers(data = survey_reach_nodes_wgs84_NRC_ANC.sf,
-                                         color = "#FF0000",
+                                         color = "black",
+                                         weight = 0.5,
                                          fillColor = "#FF0000",
                                          radius = ~ reach_node_sizes(perc_bin),
                                          opacity = 0.7,
@@ -660,11 +685,12 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
                                          popup = ~ paste0(Cmmn_nm, ", ID:", nID, ", ", Region)
                                          ) %>%
                         addCircleMarkers(data = Node_leaflet_84_REM_REACH.sf,
-                                         color = "#0070FF",
+                                         color = "black",
+                                         weight = 0.5,
                                          fillColor = "#0070FF",
-                                         radius = 5,
-                                         opacity = 1,
-                                         fillOpacity = 1,
+                                         radius = 12,
+                                         opacity = 0.7,
+                                         fillOpacity = 0.7,
                                          group = "Survey Reachability",
                                          label = ~ paste0(Cmmn_nm, ", ", Region),
                                          popup = ~ paste0(Cmmn_nm, ", ID:", nID, ", ", Region)
@@ -672,7 +698,7 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
                         # AIS Reachability
                         # addPolylines(data = ais_reach_edges_wgs84.sf,
                         #              color = ~reach_edge_pal(perc_bin),
-                        #              opacity = 1,
+                        #              opacity = 0.7,
                         #              weight = ~reach_edge_weights(perc_bin),
                         #              group = "AIS Reachability",
                         #              label = ~ paste0("From ", from, " To ", to),
@@ -680,7 +706,7 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
                         addCircleMarkers(data = ais_node_leaflet_84_REM.sf2,
                                          color = "#9C9C9C",
                                          radius = 2,
-                                         opacity = 1,
+                                         opacity = 0.7,
                                          group = "AIS Reachability",
                                          label = ~ paste0(Cmmn_nm, ", ", Region),
                                          popup = ~ paste0(Cmmn_nm, ", ", Region)
@@ -689,28 +715,30 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
                                          color = "#9C9C9C",
                                          fillColor = "#9C9C9C",
                                          radius = 3,
-                                         opacity = 1,
-                                         fillOpacity = 1,
+                                         opacity = 0.7,
+                                         fillOpacity = 0.7,
                                          group = "AIS Reachability",
                                          label = ~ paste0(Cmmn_nm, ", ", Region),
                                          popup = ~ paste0(Cmmn_nm, ", ID:", nID, ", ", Region)
                                          ) %>%
                         addCircleMarkers(data = ais_reach_nodes_wgs84_NRC_ANC.sf,
-                                         color = "#FF0000",
+                                         color = "black",
+                                         weight = 0.5,
                                          fillColor = "#FF0000",
-                                         radius = ~reach_node_sizes(perc_bin),,
-                                         opacity = 1,
-                                         fillOpacity = 1,
+                                         radius = ~reach_node_sizes(perc_bin),
+                                         opacity = 0.7,
+                                         fillOpacity = 0.7,
                                          group = "AIS Reachability",
                                          label = ~ paste0(Cmmn_nm, ", ", Region),
                                          popup = ~ paste0(Cmmn_nm, ", ID:", nID, ", ", Region)
                                          ) %>%
                         addCircleMarkers(data = ais_node_leaflet_84_REM_REACH.sf,
-                                         color = "#0070FF",
+                                         color = "black",
+                                         weight = 0.5,
                                          fillColor = "#0070FF",
-                                         radius = 5,
-                                         opacity = 1,
-                                         fillOpacity = 1,
+                                         radius = 12,
+                                         opacity = 0.7,
+                                         fillOpacity = 0.7,
                                          group = "AIS Reachability",
                                          label = ~ paste0(Cmmn_nm, ", ", Region),
                                          popup = ~ paste0(Cmmn_nm, ", ID:", nID, ", ", Region)
@@ -724,35 +752,40 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
                         addCircleMarkers(data = survey_leaflet_84_5kn_REM.sf2,
                                          radius = 2,
                                          color = "#9C9C9C",
-                                         fillOpacity = 5,
+                                         opacity = 0.7,
                                          group = "Survey Downstream",
                                          popup = ~ paste0(Cmmn_nm, ", ",  Type, ", ID:", nID, ", ", Region, ", Percentage of Incoming Vessels Nationwide: ", TON)) %>%    # Add non Northland nodes
                         addCircleMarkers(data = survey_leaflet_84_5kn_NRC_NOANC.sf,
-                                         radius = 3,
+                                         radius = 2,
                                          color = "#9C9C9C",
-                                         fillColor = "lightgray",
-                                         fillOpacity = 5,
+                                         opacity = 0.7,
                                          group = "Survey Downstream",
                                          popup = ~ paste0(Cmmn_nm,", ",  Type, ", ID:", nID, ", ", Region, ", Incoming Vessels = ", incmng_, ", Percentage of Incoming Vessels Nationwide: ", per_inc, "%")) %>%             # Add non-anchorage Northland nodes
                         addCircleMarkers(data = survey_leaflet_84_5kn_REM_INF.sf,
                                          radius = 12,
-                                         color = "#0070FF",
+                                         color = "black",
+                                         weight = 0.5,
                                          fillColor = "#0070FF",
-                                         fillOpacity = 5,
+                                         opacity = 0.7,
+                                         fillOpacity = 0.7,
                                          group = "Survey Downstream",
                                          popup = ~ paste0(Cmmn_nm,", ",  Type, ", ID:", nID, ", ", Region)) %>% # Added infected nodes
                         addCircleMarkers(data = survey_leaflet_84_5kn_NRC_OMA.sf,
-                                         radius = ~(sqrt(per_inc)) * 5,
-                                         color = "#0070FF",
+                                         radius = ~down_node_sizes(perc_bin),
+                                         color = "black",
+                                         weight = 0.5,
                                          fillColor = "#0070FF",
-                                         fillOpacity = ~per_inc,
+                                         opacity = 0.7,
+                                         fillOpacity = 0.7,
                                          group = "Survey Downstream",
                                          popup = ~ paste0(Cmmn_nm,", ",  Type, ", ID:", nID, ", ", Region, ", Incoming Vessels = ", incmng_, ", Percentage of Incoming Vessels Nationwide: ", per_inc, "%")) %>% # adds Infected BOI node
                         addCircleMarkers(data = survey_leaflet_84_5kn_NRC_ANC.sf,
-                                         radius = ~(sqrt(per_inc)) * 5,
-                                         color = "#FF0000",
+                                         radius = ~down_node_sizes(perc_bin),
+                                         color = "black",
+                                         weight = 0.5,
                                          fillColor = "#FF0000",
-                                         fillOpacity = ~per_inc,
+                                         opacity = 0.7,
+                                         fillOpacity = 0.7,
                                          group = "Survey Downstream",
                                          popup = ~ paste0(Cmmn_nm,", ",  Type, ", ID:", nID, ", ", Region, ", Incoming Vessels = ", incmng_, ", Percentage of Incoming Vessels Nationwide: ", per_inc, "%")) %>% # adds northland anchoring nodes
                         # AIS Downstream
@@ -764,28 +797,31 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
                         addCircleMarkers(data = ais_leaflet_84_5kn_REM.sf2,
                                          radius = 2,
                                          color = "#9C9C9C",
-                                         fillOpacity = 5,
+                                         opacity = 0.7,
                                          group = "AIS Downstream",
                                          popup = ~ paste0(Cmmn_nm, ", ",  Tr1_typ, ", ID:", nID, ", ", Region, ", Percentage of Incoming Vessels Nationwide: ", Perc_tot)) %>%    # Add non Northland nodes
                         addCircleMarkers(data = ais_leaflet_84_5kn_NRC_NOANC.sf,
-                                         radius = 3,
+                                         radius = 1,
                                          color = "#9C9C9C",
-                                         fillColor = "lightgray",
-                                         fillOpacity = 5,
+                                         opacity = 0.7,
                                          group = "AIS Downstream",
                                          popup = ~ paste0(Cmmn_nm,", ",  Tr1_typ, ", ID:", nID, ", ", Region, ", Incoming Vessels = ", in_strn, ", Percentage of Incoming Vessels Nationwide: ", Perc_tot, "%")) %>%             # Add non-anchorage Northland nodes
                         addCircleMarkers(data = ais_leaflet_84_5kn_REM_INF.sf,
                                          radius = 12,
-                                         color = "#0070FF",
+                                         color = "black",
+                                         weight = 0.5,
                                          fillColor = "#0070FF",
-                                         fillOpacity = 5,
+                                         opacity = 0.7,
+                                         fillOpacity = 0.7,
                                          group = "AIS Downstream",
                                          popup = ~ paste0(Cmmn_nm,", ",  Tr1_typ, ", ID:", nID, ", ", Region)) %>% # Added infected nodes
                         addCircleMarkers(data = ais_leaflet_84_5kn_NRC_ANC.sf,
-                                         radius = ~(sqrt(Perc_tot)) * 5,
-                                         color = "#FF0000",
+                                         radius = ~down_node_sizes(perc_bin),
+                                         color = "black",
+                                         weight = 0.5,
                                          fillColor = "#FF0000",
-                                         fillOpacity = ~Perc_tot,
+                                         opacity = 0.7,
+                                         fillOpacity = 0.7,
                                          group = "AIS Downstream",
                                          popup = ~ paste0(Cmmn_nm,", ",  Tr1_typ, ", ID:", nID, ", ", Region, ", Incoming Vessels = ", in_strn, ", Percentage of Incoming Vessels Nationwide: ", Perc_tot, "%"))  # adds northland anchoring nodes              
                         
