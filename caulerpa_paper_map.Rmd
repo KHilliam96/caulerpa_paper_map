@@ -52,9 +52,11 @@ if (!requireNamespace("pacman", quietly = TRUE)) {
 
 # Data Wrangling
 pacman::p_load(tidyverse)
+pacman::p_load(igraph)
 
 # Spatial
 pacman::p_load(sf)
+library(MSEaC)
 
 # Plotting
 pacman::p_load(leaflet)
@@ -201,15 +203,34 @@ ais_reach_edges.sf <- st_read(file.path(inputs,
 ```{r Import AIS Downstream Network}
 ais_down_nodes.sf <- st_read(file.path(inputs,
                                         "AIS_net_Caulerpa_30_06_2023_NZTM_nodes.shp"))
-  
-  
+
+
 ais_down_edges.sf <- st_read(file.path(inputs,
                                         "AIS_net_Caulerpa_30_06_2023_NZTM_edges.shp"))
 
 ```
 
+```{r Import AIS reachability network}
+# load rds file
+ais_reach.net <- readRDS(file.path(inputs,
+                                        "Reachability_AIS_network.rds"))
+
+summary(ais_reach.net)
+```
+
+
+```{r Import AIS Downstream node fix}
+ais_down_fix.df <- st_read(file.path(inputs,
+                                        "AIS_Down_caulerpa_NRC_Oct25.shp")) %>%
+                        dplyr::select(nID, name, Perc_tot) %>%
+                        st_drop_geometry()
+```
+
+
+
 ```{r Import common names}
-common_names.df <- read.csv("S:/RDS28221-BiosecurityToolbox (eSolutions Admin)/individualProjects/CaulerpaKyle/Data/2_codeWIP/Kyle/Northland_node_common_names.csv")
+common_names.df <- read.csv("S:/RDS28221-BiosecurityToolbox (eSolutions Admin)/individualProjects/CaulerpaKyle/Data/2_codeWIP/Kyle/Northland_node_common_names.csv") %>%
+                            distinct()
 ```
 
 
@@ -228,12 +249,36 @@ ais_reach_edges_wgs84.sf <- st_transform(ais_reach_edges.sf, crs = "EPSG:4326")
 ais_down_nodes_wgs84.sf <- st_transform(ais_down_nodes.sf, crs = "EPSG:4326")
 ais_down_edges_wgs84.sf <- st_transform(ais_down_edges.sf, crs = "EPSG:4326")
 
+ais_reach_edges.sf <- igraph2sf_edge(ais_reach.net, 
+                                     proj4 = "+proj=tmerc +lat_0=0 +lon_0=173 +k=0.9996 +x_0=1600000 +y_0=10000000 +datum=WGS84 +units=m +no_defs",
+                                     dateline = TRUE)
+plot(ais_reach_edges.sf$geometry)
 
+
+# ais_reach_edges_wgs84.df <- ais_reach_edges_wgs84.sf %>%
+#                                 st_drop_geometry() %>%
+#                                 dplyr::select(from, to, No_boats)
+
+# paste out x and y from ais_reach_nodes_wgs84.sf
+ais_reach_nodes_wgs84.sf <- ais_reach_nodes_wgs84.sf %>%
+                                mutate(lon = st_coordinates(geometry)[,1],
+                                       lat = st_coordinates(geometry)[,2]) %>%
+                                st_drop_geometry() %>%
+                                mutate(lon = ifelse(lon < 0, lon + 360, lon)) %>%
+                                st_as_sf(coords = c("lon", "lat"), crs = 4326, remove = FALSE) 
+  
+  
+                          
+
+ais_reach_edges_wgs84.sf <- ais_reach_edges.sf # %>%
+                            # merge(ais_reach_edges_wgs84.df, by = c("from", "to"), all.x = TRUE) 
+  
 ```
 
 ```{r Merge in commons names}
 common_names.df2 <- common_names.df %>%
-                        dplyr::select(-nID)
+                        dplyr::select(-nID) %>%
+                        mutate(Common_name = gsub("Outer Bay of Islands' Moorings", "Te Rawhiti Inlet", Common_name)) # Change name to te rawhiti inlet
 
 survey_reach_nodes_wgs84.sf2 <- survey_reach_nodes_wgs84.sf %>%
                                         merge(common_names.df2, by = "name", all.x = TRUE) %>%
@@ -249,7 +294,11 @@ ais_reach_nodes_wgs84.sf2 <- ais_reach_nodes_wgs84.sf %>%
 
 ais_down_nodes_wgs84.sf2 <- ais_down_nodes_wgs84.sf %>%
                                         merge(common_names.df2, by = "name", all.x = TRUE) %>%
-                                        mutate(Cmmn_nm = coalesce(Common_name, name)) 
+                                        mutate(Cmmn_nm = coalesce(Common_name, name)) %>%
+                                        merge(ais_down_fix.df, by = c("nID", "name"), all.x = TRUE) %>%
+                                        mutate(Perc_tot = coalesce(Perc_tot.y, Perc_tot.x)) %>%
+                                        dplyr::select(-c(Perc_tot.x, Perc_tot.y))
+  
 
 survey_reach_edges_wgs84.sf <- survey_reach_edges_wgs84.sf %>%
                                         merge(common_names.df2, by.x = "from", by.y = "name", all.x = TRUE) %>%
@@ -369,7 +418,13 @@ ais_node_leaflet_84_REM_REACH.sf <- filter(ais_reach_nodes_wgs84_REM.sf, nID %in
   ais_leaflet_84_5kn_NRC.sf2 <- ais_leaflet_84_5kn_NRC.sf 
   
   ais_leaflet_84_5kn_NRC_ANC.sf <- ais_leaflet_84_5kn_NRC.sf2 %>%
-                                                    filter(anchorg == "Yes")
+                                                    filter(anchorg == "Yes") # %>%
+                                                    # mutate(sum_vessels = sum(in_strn, na.rm = TRUE),
+                                                    #        Perc_tot = (in_strn/sum_vessels) * 100) %>%
+                                                    # distinct()
+  
+  
+  
   ais_leaflet_84_5kn_NRC_NOANC.sf <- ais_leaflet_84_5kn_NRC.sf2 %>%
                                                     filter(anchorg == "No")
   
@@ -435,7 +490,7 @@ annual_vessel_breaks <- c(0.00001, 0.25, 1, 2.5, 100)
   # TWSA_breaks_edges <-  quantile(ais_reach_edges_wgs84.sf$Perc_total, probs = c(0, 0.2, 0.4, 0.75, 0.9, 1))
 
     # Create binned variable column
-  ais_reach_edges_wgs84.sf$perc_bin <- cut(ais_reach_edges_wgs84.sf$Perc_total, breaks = TWSA_breaks_edges,
+  ais_reach_edges_wgs84.sf$perc_bin <- cut(ais_reach_edges_wgs84.sf$Perc_tot, breaks = TWSA_breaks_edges,
                                              labels = c("<0.02", "0.02 - 0.1", "0.1 - 0.25", "0.25 - 1", ">1"))
   survey_reach_edges_wgs84.sf$perc_bin <- cut(survey_reach_edges_wgs84.sf$Perc_tot, breaks = TWSA_breaks_edges,
                                               labels = c("<0.02", "0.02 - 0.1", "0.1 - 0.25", "0.25 - 1", ">1"))
@@ -579,11 +634,12 @@ caulerpa_leaflet.plot <- leaflet() %>%
                         hideGroup(c("Survey Downstream",
                                     "AIS Reachability",
                                     "AIS Downstream")) %>% # Hide all but first layer
-                        addLayersControl(overlayGroups = c("Survey Reachability", 
+                        addLayersControl(baseGroups = c("Survey Reachability", 
                                                    "Survey Downstream",
                                                    "AIS Reachability",
                                                    "AIS Downstream"),
-                                 options = layersControlOptions(collapsed = FALSE)) %>%
+                                 options = layersControlOptions(collapsed = FALSE),
+                                ) %>%
                         addEasyButton(easyButton(icon = "fa-globe",
                                                   title = "Reset View",
                                                   onClick = JS("function(btn, map){ map.setView([-37.5, 173.40], 6); }"))) %>%
@@ -619,7 +675,7 @@ for(i in seq_along(ais_reach_edges_wgs84.list)){
                  weight = ~reach_edge_weights(perc_bin),
                  group = "AIS Reachability",
                  label = ~ paste0("From ", from, " To ", to),
-                 popup = ~ paste0("From ", from, " To ", to, ", Vessels =", Noboats)) %>%
+                 popup = ~ paste0("From ", from, " To ", to, ", Vessels =", No_boats)) %>%
     addPolylines(data = survey_reach_edges_wgs84.list[[i]],
                  color = ~reach_edge_pal(perc_bin), 
                  opacity = 0.7,
@@ -826,10 +882,66 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
                                          popup = ~ paste0(Cmmn_nm,", ",  Tr1_typ, ", ID:", nID, ", ", Region, ", Incoming Vessels = ", in_strn, ", Percentage of Incoming Vessels Nationwide: ", Perc_tot, "%"))  # adds northland anchoring nodes              
                         
 
+# caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
+#   onRender(
+#     sprintf("
+#     function(el, x) {
+#       var reachLegend = L.control({position: 'bottomright'});
+#       reachLegend.onAdd = function(map) {
+#         var div = L.DomUtil.create('div', 'info legend');
+#         div.innerHTML = `%s`;
+#         return div;
+#       };
+# 
+#       var downLegend = L.control({position: 'bottomright'});
+#       downLegend.onAdd = function(map) {
+#         var div = L.DomUtil.create('div', 'info legend');
+#         div.innerHTML = `%s`;
+#         return div;
+#       };
+# 
+#       // --- Add initial legend(s) for already-active overlays ---
+#       var map = this;
+#       map.eachLayer(function(layer) {
+#         if (layer.options && layer.options.group === 'AIS Reachability' || layer.options.group === 'Survey Reachability') {
+#           reachLegend.addTo(map);
+#         }
+#         if (layer.options && layer.options.group === 'AIS Downstream' || layer.options.group === 'Survey Downstream') {
+#           downLegend.addTo(map);
+#         }
+#       });
+# 
+#       // --- Toggle legends when overlays are switched ---
+#       map.on('overlayadd', function(e) {
+#         if (e.name === 'AIS Reachability' || e.name === 'Survey Reachability') {
+#           reachLegend.addTo(map);
+#         }
+#         if (e.name === 'AIS Downstream' || e.name === 'Survey Downstream') {
+#           downLegend.addTo(map);
+#         }
+#       });
+# 
+#       map.on('overlayremove', function(e) {
+#         if (e.name === 'AIS Reachability' || e.name === 'Survey Reachability') {
+#           map.removeControl(reachLegend);
+#         }
+#         if (e.name === 'AIS Downstream' || e.name === 'Survey Downstream') {
+#           map.removeControl(downLegend);
+#         }
+#       });
+#     }
+#     ",
+#     gsub("\n", "", reachability_legend),
+#     gsub("\n", "", downstream_legend)
+#     )
+#   )
+
 caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
-  onRender(
-    sprintf("
+  onRender(sprintf("
     function(el, x) {
+      var map = this;
+
+      // --- Define legends ---
       var reachLegend = L.control({position: 'bottomright'});
       reachLegend.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'info legend');
@@ -844,41 +956,46 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
         return div;
       };
 
-      // --- Add initial legend(s) for already-active overlays ---
-      var map = this;
-      map.eachLayer(function(layer) {
-        if (layer.options && layer.options.group === 'AIS Reachability' || layer.options.group === 'Survey Reachability') {
+      // --- Helper: show the correct legend for a given base group name ---
+      function updateLegend(groupName) {
+        try { map.removeControl(reachLegend); } catch(e) {}
+        try { map.removeControl(downLegend); } catch(e) {}
+
+        var reachGroups = ['AIS Reachability', 'Survey Reachability'];
+        var downGroups  = ['AIS Downstream',   'Survey Downstream'];
+
+        if (reachGroups.indexOf(groupName) !== -1) {
           reachLegend.addTo(map);
-        }
-        if (layer.options && layer.options.group === 'AIS Downstream' || layer.options.group === 'Survey Downstream') {
+        } else if (downGroups.indexOf(groupName) !== -1) {
           downLegend.addTo(map);
         }
-      });
+      }
 
-      // --- Toggle legends when overlays are switched ---
-      map.on('overlayadd', function(e) {
-        if (e.name === 'AIS Reachability' || e.name === 'Survey Reachability') {
-          reachLegend.addTo(map);
+      // --- Initial legend: detect the currently visible base layer ---
+      // iterate layers and pick the one that is both on the map and has a 'group' name
+      var initialGroup = null;
+      for (var id in map._layers) {
+        var lyr = map._layers[id];
+        if (lyr && lyr.options && lyr.options.group && map.hasLayer(lyr)) {
+          initialGroup = lyr.options.group;
+          break;
         }
-        if (e.name === 'AIS Downstream' || e.name === 'Survey Downstream') {
-          downLegend.addTo(map);
-        }
-      });
+      }
+      if (initialGroup) {
+        updateLegend(initialGroup);
+      }
 
-      map.on('overlayremove', function(e) {
-        if (e.name === 'AIS Reachability' || e.name === 'Survey Reachability') {
-          map.removeControl(reachLegend);
-        }
-        if (e.name === 'AIS Downstream' || e.name === 'Survey Downstream') {
-          map.removeControl(downLegend);
-        }
+      // --- Update when base layer changes ---
+      map.on('baselayerchange', function(e) {
+        // e.name is the label used in addLayersControl(baseGroups = ...)
+        updateLegend(e.name);
       });
     }
-    ",
-    gsub("\n", "", reachability_legend),
-    gsub("\n", "", downstream_legend)
-    )
-  )
+  ",
+  gsub("\n", "", reachability_legend),
+  gsub("\n", "", downstream_legend)
+  ))
+
 
 caulerpa_leaflet.plot
 
