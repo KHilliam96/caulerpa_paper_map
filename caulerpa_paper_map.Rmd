@@ -596,7 +596,6 @@ survey_reachability_legend <- HTML('
     <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
     <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 2.5</div>
     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#0070FF; border:1.5px solid black; margin-right:6px;"></span>Exotic <em>Caulerpa</em> sites</div>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#9C9C9C; margin-right:6px;"></span>Sites outside of NRC</div>
     <br>
     <b>Annual vessel movements</b><br>
     % of nationwide total<br>
@@ -621,7 +620,6 @@ ais_reachability_legend <- HTML('
     <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
     <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 2.5</div>
     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#0070FF; border:1.5px solid black; margin-right:6px;"></span>Exotic <em>Caulerpa</em> sites</div>
-    <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#9C9C9C; margin-right:6px;"></span>Sites outside of NRC</div>
     <br>
     <b>Annual vessel movements</b><br>
     % of nationwide total<br>
