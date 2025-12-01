@@ -591,10 +591,10 @@ survey_reachability_legend <- HTML('
     11,322 Recreational Vessels (100%)<br><br>
     <b>Annual vessel arrivals</b><br>
     % of nationwide total<br>
-    <div><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>< 0.25</div>
-    <div><span style="display:inline-block; width:16px; height:16px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>0.25 - 1</div>
-    <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
-    <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 2.5</div>
+    <div><span style="display:inline-block; width:12px; height:8px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>< 0.25</div>
+    <div><span style="display:inline-block; width:16px; height:12px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>0.25 - 1</div>
+    <div><span style="display:inline-block; width:20px; height:16px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
+    <div><span style="display:inline-block; width:24px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 2.5</div>
     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#0070FF; border:1.5px solid black; margin-right:6px;"></span>Exotic <em>Caulerpa</em> sites</div>
     <br>
     <b>Annual vessel movements</b><br>
@@ -615,10 +615,10 @@ ais_reachability_legend <- HTML('
     & 49 Commercial Vessels (11%)<br><br>
     <b>Annual vessel arrivals</b><br>
     % of nationwide total<br>
-    <div><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>< 0.25</div>
-    <div><span style="display:inline-block; width:16px; height:16px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>0.25 - 1</div>
-    <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
-    <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 2.5</div>
+    <div><span style="display:inline-block; width:12px; height:8px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>< 0.25</div>
+    <div><span style="display:inline-block; width:16px; height:12px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>0.25 - 1</div>
+    <div><span style="display:inline-block; width:20px; height:16px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
+    <div><span style="display:inline-block; width:24px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 2.5</div>
     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#0070FF; border:1.5px solid black; margin-right:6px;"></span>Exotic <em>Caulerpa</em> sites</div>
     <br>
     <b>Annual vessel movements</b><br>
@@ -638,10 +638,10 @@ survey_downstream_legend <- HTML('
     6,683 Recreational Vessels (100%)<br><br>
     <b>Relative <em>Caulerpa</em> Pressure</b><br>
     % of total region-wide anchoring events<br>
-    <div><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>< 1</div>
-    <div><span style="display:inline-block; width:16px; height:16px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
-    <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>2.5 - 5</div>
-    <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 5</div>
+    <div><span style="display:inline-block; width:12px; height:8px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>< 1</div>
+    <div><span style="display:inline-block; width:16px; height:12px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
+    <div><span style="display:inline-block; width:20px; height:16px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>2.5 - 5</div>
+    <div><span style="display:inline-block; width:24px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 5</div>
     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#0070FF; border:1.5px solid black; margin-right:6px;"></span>Exotic <em>Caulerpa</em> sites</div>
     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#9C9C9C; margin-right:6px;"></span>Sites outside of NRC</div>
     <br>
@@ -663,10 +663,10 @@ ais_downstream_legend <- HTML('
     & 33 Commercial Vessels (11%)<br><br>
     <b>Relative <em>Caulerpa</em> Pressure</b><br>
     % of total region-wide anchoring events<br>
-    <div><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>< 1</div>
-    <div><span style="display:inline-block; width:16px; height:16px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
-    <div><span style="display:inline-block; width:20px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>2.5 - 5</div>
-    <div><span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 5</div>
+    <div><span style="display:inline-block; width:12px; height:8px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>< 1</div>
+    <div><span style="display:inline-block; width:16px; height:12px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>1 - 2.5</div>
+    <div><span style="display:inline-block; width:20px; height:16px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>2.5 - 5</div>
+    <div><span style="display:inline-block; width:24px; height:20px; border-radius:50%; background:red; border:1.5px solid black; margin-right:6px;"></span>> 5</div>
     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#0070FF; border:1.5px solid black; margin-right:6px;"></span>Exotic <em>Caulerpa</em> sites</div>
     <div><span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#9C9C9C; margin-right:6px;"></span>Sites outside of NRC</div>
     <br>
@@ -902,13 +902,13 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
                                          color = "#9C9C9C",
                                          opacity = 0.7,
                                          group = "AIS Downstream",
-                                         popup = ~ paste0(Cmmn_nm, ", ", Region, ", Percentage of Incoming Vessels for Region: ", Perc_tot)) %>%    # Add non Northland nodes
+                                         popup = ~ paste0(Cmmn_nm, ", ", Region, ", Percentage of Incoming Vessels for Region: ", round(Perc_tot, 2), "%")) %>%    # Add non Northland nodes
                         addCircleMarkers(data = ais_leaflet_84_5kn_NRC_NOANC.sf,
                                          radius = 1,
                                          color = "#9C9C9C",
                                          opacity = 0.7,
                                          group = "AIS Downstream",
-                                         popup = ~ paste0(Cmmn_nm, ", ", Region, ", Percentage of Incoming Vessels for Region: ", Perc_tot)) %>%             # Add non-anchorage Northland nodes
+                                         popup = ~ paste0(Cmmn_nm, ", ", Region, ", Percentage of Incoming Vessels for Region: ", round(Perc_tot, 2), "%")) %>%             # Add non-anchorage Northland nodes
                         addCircleMarkers(data = ais_leaflet_84_5kn_REM_INF.sf,
                                          radius = 12,
                                          color = "black",
@@ -926,7 +926,7 @@ caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
                                          opacity = 0.7,
                                          fillOpacity = 0.7,
                                          group = "AIS Downstream",
-                                         popup = ~ paste0(Cmmn_nm, ", ", Region, ", Percentage of Incoming Vessels for Region: ", Perc_tot))  # adds northland anchoring nodes              
+                                         popup = ~ paste0(Cmmn_nm, ", ", Region, ", Percentage of Incoming Vessels for Region: ", round(Perc_tot, 2), "%"))  # adds northland anchoring nodes              
                         
 
 # caulerpa_leaflet.plot <- caulerpa_leaflet.plot %>%
@@ -1071,15 +1071,23 @@ caulerpa_leaflet.plot
 if(write_outputs){
   
   saveWidget(caulerpa_leaflet.plot, 
-             file = file.path(figure_directory, "caulerpa_leaflet_v2.html"), 
+             file = file.path(figure_directory, "caulerpa_leaflet_v3.html"), 
              selfcontained = TRUE)
   
-  message("Caulerpa leaflet map saved to ", file.path(figure_directory, "caulerpa_leaflet_v2.html"))
+  message("Caulerpa leaflet map saved to ", file.path(figure_directory, "caulerpa_leaflet_v3.html"))
 }
 
 
 
-
+if(write_outputs){
+  
+  saveWidget(caulerpa_leaflet.plot, 
+             file = "C:/Users/KyleHilliam/OneDrive - Sydney Institute of Marine Science/Documents/science/analysis/caulerpa_paper_map/index.html", 
+             selfcontained = TRUE)
+  
+  message("Caulerpa leaflet map saved to ", "C:/Users/KyleHilliam/OneDrive - Sydney Institute of Marine Science/Documents/science/analysis/caulerpa_paper_map/index.html")
+  
+}
 
 ```
 
