@@ -457,7 +457,7 @@ annual_vessel_breaks <- c(0.00001, 0.25, 1, 2.5, 100)
                                               labels = c("<0.25", "0.25 - 1", "1 - 2.5", ">2.5"))
   
   
-  node_custom_weights <- c(12, 16, 20, 24)
+  node_custom_weights <- c(8, 12, 16, 20)
 
   reach_node_sizes <- function(bin) {
     # Map vessel_bin values to node_custom_weights
@@ -478,7 +478,7 @@ annual_vessel_breaks <- c(0.00001, 0.25, 1, 2.5, 100)
   ais_leaflet_84_5kn_NRC_ANC.sf$perc_bin <- cut(ais_leaflet_84_5kn_NRC_ANC.sf$Perc_tot, breaks = down_vessel_breaks,
                                                     labels = c("<1", "1 - 2.5", "2.5 - 5", ">5"))
   
-  node_custom_weights <- c(12, 16, 20, 24)
+  node_custom_weights <- c(8, 12, 16, 20)
 
   down_node_sizes <- function(bin) {
     # Map vessel_bin values to node_custom_weights
@@ -1079,15 +1079,15 @@ if(write_outputs){
 
 
 
-if(write_outputs){
-  
-  saveWidget(caulerpa_leaflet.plot, 
-             file = "C:/Users/KyleHilliam/OneDrive - Sydney Institute of Marine Science/Documents/science/analysis/caulerpa_paper_map/index.html", 
-             selfcontained = TRUE)
-  
-  message("Caulerpa leaflet map saved to ", "C:/Users/KyleHilliam/OneDrive - Sydney Institute of Marine Science/Documents/science/analysis/caulerpa_paper_map/index.html")
-  
-}
+# if(write_outputs){
+#   
+#   saveWidget(caulerpa_leaflet.plot, 
+#              file = "C:/Users/KyleHilliam/OneDrive - Sydney Institute of Marine Science/Documents/science/analysis/caulerpa_paper_map/index.html", 
+#              selfcontained = TRUE)
+#   
+#   message("Caulerpa leaflet map saved to ", "C:/Users/KyleHilliam/OneDrive - Sydney Institute of Marine Science/Documents/science/analysis/caulerpa_paper_map/index.html")
+#   
+# }
 
 ```
 
